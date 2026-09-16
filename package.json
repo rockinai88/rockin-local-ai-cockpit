@@ -1,17 +1,40 @@
-﻿{
-  "name": "rockin-local-ai-cockpit",
-  "version": "0.1.0",
-  "private": true,
-  "engines": { "node": ">=22" },
-  "workspaces": ["apps/*", "packages/*"],
-  "scripts": {
-    "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "build": "npm run build --workspaces --if-present"
-  },
-  "devDependencies": {
-    "@types/node": "^24.0.0",
-    "typescript": "^5.9.0",
-    "vitest": "^3.2.0"
-  }
+{
+    "name": "rockin-local-ai-cockpit",
+    "version": "0.1.0",
+    "private": true,
+    "engines": {
+        "node": ">=22"
+    },
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "test": "vitest run",
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "build": "npm run build --workspaces --if-present"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^7.0.1",
+        "@testing-library/react": "^16.3.3",
+        "@types/node": "^24.0.0",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@types/three": "^0.186.0",
+        "@vitejs/plugin-react": "6.1.1",
+        "eslint": "^10.10.0",
+        "jsdom": "^30.0.1",
+        "prettier": "^3.9.6",
+        "typescript": "^5.9.0",
+        "vite": "^8.3.0",
+        "vitest": "5.0.1"
+    },
+    "dependencies": {
+        "@fastify/cors": "^11.3.0",
+        "fastify": "^5.12.4",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0",
+        "systeminformation": "^5.33.10",
+        "three": "^0.180.0"
+    }
 }
