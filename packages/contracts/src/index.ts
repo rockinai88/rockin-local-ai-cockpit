@@ -18,7 +18,7 @@ export const HardwareSnapshotSchema = z
   .object({
     cpu: z.string().max(200),
     ramUsed: z.number().nonnegative(),
-    ramTotal: z.number().positive(),
+    ramTotal: z.number().nonnegative(),
     gpu: z.string().max(200).nullable(),
     vramUsed: z.number().nonnegative().nullable(),
     vramTotal: z.number().positive().nullable(),

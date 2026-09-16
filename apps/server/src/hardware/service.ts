@@ -1,6 +1,16 @@
 import si from "systeminformation";
-import type { HardwareSnapshot } from "../../../../packages/contracts/src/index.ts";
+import {
+  HardwareSnapshotSchema,
+  type HardwareSnapshot,
+} from "../../../../packages/contracts/src/index.ts";
+
 let cached: { at: number; value: HardwareSnapshot } | undefined;
+
+function nonnegative(value: unknown): number {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(0, number) : 0;
+}
+
 export async function readHardware(): Promise<HardwareSnapshot> {
   if (cached && Date.now() - cached.at < 2000) return cached.value;
   const [cpu, mem, gfx] = await Promise.all([
@@ -11,14 +21,22 @@ export async function readHardware(): Promise<HardwareSnapshot> {
   const g =
     gfx.controllers.find((x) => /nvidia/i.test(x.vendor ?? "")) ??
     gfx.controllers[0];
-  const value = {
-    cpu: `${cpu.manufacturer} ${cpu.brand}`.trim().slice(0, 200),
-    ramUsed: mem.active,
-    ramTotal: mem.total,
-    gpu: g?.model?.slice(0, 200) ?? null,
+  const ramTotal = nonnegative(mem.total);
+  const ramUsed =
+    ramTotal === 0 ? 0 : Math.min(nonnegative(mem.active), ramTotal);
+  const cpuLabel =
+    `${cpu.manufacturer ?? ""} ${cpu.brand ?? ""}`.trim() || "Unknown CPU";
+  const gpuLabel = g?.model?.trim() || null;
+  const vramMb = Number(g?.vram);
+  const value = HardwareSnapshotSchema.parse({
+    cpu: cpuLabel.slice(0, 200),
+    ramUsed,
+    ramTotal,
+    gpu: gpuLabel?.slice(0, 200) ?? null,
     vramUsed: null,
-    vramTotal: g?.vram ? g.vram * 1024 * 1024 : null,
-  };
+    vramTotal:
+      Number.isFinite(vramMb) && vramMb > 0 ? vramMb * 1024 * 1024 : null,
+  });
   cached = { at: Date.now(), value };
   return value;
 }

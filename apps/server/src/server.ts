@@ -1,33 +1,69 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { loadConfig } from "./config.ts";
+import { loadConfig, type ServerConfig } from "./config.ts";
 import { OllamaClient } from "./ollama/client.ts";
 import { readHardware } from "./hardware/service.ts";
 import { buildGraph } from "./graph/service.ts";
-import { ChatRequestSchema } from "../../../packages/contracts/src/index.ts";
+import {
+  ChatRequestSchema,
+  type ModelSummary,
+} from "../../../packages/contracts/src/index.ts";
+
+function isLoopbackHost(value: string | undefined): boolean {
+  if (!value) return false;
+  const match = value
+    .trim()
+    .toLowerCase()
+    .match(/^(127\.0\.0\.1|localhost|\[::1\])(?::(\d{1,5}))?$/);
+  if (!match) return false;
+  if (!match[2]) return true;
+  const port = Number(match[2]);
+  return Number.isInteger(port) && port > 0 && port <= 65535;
+}
+
+function allowedOrigins(cfg: ServerConfig): Set<string> {
+  return new Set([
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://[::1]:5173",
+    `http://127.0.0.1:${cfg.port}`,
+    `http://localhost:${cfg.port}`,
+    `http://[::1]:${cfg.port}`,
+  ]);
+}
 export async function buildServer(
   env: Record<string, string | undefined> = process.env,
 ) {
   const cfg = loadConfig(env);
+  const origins = allowedOrigins(cfg);
   const app = Fastify({ bodyLimit: 256 * 1024, logger: false });
+
+  app.addHook("onRequest", async (request, reply) => {
+    if (!isLoopbackHost(request.headers.host)) {
+      return reply.code(403).send({ code: "HOST_DENIED" });
+    }
+    const origin = request.headers.origin;
+    if (origin && !origins.has(origin)) {
+      return reply.code(403).send({ code: "ORIGIN_DENIED" });
+    }
+  });
+
   await app.register(cors, {
-    origin: (origin, cb) => {
-      if (
-        !origin ||
-        origin === `http://${cfg.host}:5173` ||
-        origin === `http://${cfg.host}:${cfg.port}`
-      )
-        cb(null, true);
-      else cb(new Error("ORIGIN_DENIED"), false);
+    origin: (origin, callback) => {
+      callback(null, !origin || origins.has(origin));
     },
   });
-  app.addHook("onSend", async (_q, r, p) => {
-    r.header("x-content-type-options", "nosniff")
+
+  app.addHook("onSend", async (_request, reply, payload) => {
+    reply
+      .header("x-content-type-options", "nosniff")
       .header("referrer-policy", "no-referrer")
       .header("cache-control", "no-store");
-    return p;
+    return payload;
   });
+
   const ollama = new OllamaClient(cfg.ollamaUrl);
+
   app.get("/api/v1/health", async () => {
     let state: "online" | "offline" = "offline";
     try {
@@ -37,32 +73,49 @@ export async function buildServer(
     return {
       status: state === "online" ? "online" : "degraded",
       ollama: state,
-      version: "0.1.0",
+      version: "0.1.1",
     };
   });
-  app.get("/api/v1/models", async (_q, r) => {
+
+  app.get("/api/v1/models", async (_request, reply) => {
     try {
       return { models: await ollama.listModels() };
     } catch {
-      return r.code(503).send({ code: "OLLAMA_UNAVAILABLE" });
+      return reply.code(503).send({ code: "OLLAMA_UNAVAILABLE" });
     }
   });
-  app.get("/api/v1/system", async () => readHardware());
-  app.get("/api/v1/graph", async () => {
-    let models: any[] = [];
+
+  app.get("/api/v1/system", async (_request, reply) => {
     try {
-      models = await ollama.listModels();
-    } catch {}
-    return buildGraph(models, await readHardware());
+      return await readHardware();
+    } catch {
+      return reply.code(503).send({ code: "HARDWARE_UNAVAILABLE" });
+    }
   });
-  app.post("/api/v1/chat", async (q, r) => {
-    const parsed = ChatRequestSchema.safeParse(q.body);
-    if (!parsed.success) return r.code(400).send({ code: "INVALID_REQUEST" });
+
+  app.get("/api/v1/graph", async (_request, reply) => {
+    try {
+      let models: ModelSummary[] = [];
+      try {
+        models = await ollama.listModels();
+      } catch {}
+      return buildGraph(models, await readHardware());
+    } catch {
+      return reply.code(503).send({ code: "GRAPH_UNAVAILABLE" });
+    }
+  });
+
+  app.post("/api/v1/chat", async (request, reply) => {
+    const parsed = ChatRequestSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ code: "INVALID_REQUEST" });
+    }
     try {
       return await ollama.chat(parsed.data);
     } catch {
-      return r.code(503).send({ code: "OLLAMA_UNAVAILABLE" });
+      return reply.code(503).send({ code: "OLLAMA_UNAVAILABLE" });
     }
   });
+
   return { app, cfg };
 }
