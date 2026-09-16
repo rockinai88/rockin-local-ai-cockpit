@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ChatRequestSchema, HealthSnapshotSchema, ModelSummarySchema } from "./index.ts";
 
 describe("public API contracts", () => {

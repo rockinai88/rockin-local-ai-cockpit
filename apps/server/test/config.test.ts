@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { loadConfig } from "../src/config.ts";
 describe("server config",()=>{
  it("defaults to loopback",()=>expect(loadConfig({}).host).toBe("127.0.0.1"));

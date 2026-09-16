@@ -1,4 +1,4 @@
-﻿{
+{
     "compilerOptions":  {
                             "target":  "ES2022",
                             "module":  "NodeNext",
@@ -6,7 +6,8 @@
                             "strict":  true,
                             "skipLibCheck":  true,
                             "noEmit":  true,
-                            "allowImportingTsExtensions":  true
+                            "allowImportingTsExtensions":  true,
+                            "jsx":  "react-jsx"
                         },
     "include":  [
                     "packages/**/*.ts",

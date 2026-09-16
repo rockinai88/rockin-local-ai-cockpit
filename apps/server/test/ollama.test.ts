@@ -1,2 +1,2 @@
-﻿import { describe,expect,it } from "vitest"; import { OllamaClient } from "../src/ollama/client.ts";
+import { describe,expect,it } from "vitest"; import { OllamaClient } from "../src/ollama/client.ts";
 describe("OllamaClient",()=>{it("rejects nonlocal endpoints",()=>expect(()=>new OllamaClient("https://example.com")).toThrow(/local/i)); it("maps offline to stable error",async()=>{const c=new OllamaClient("http://127.0.0.1:9"); await expect(c.listModels()).rejects.toThrow(/OLLAMA_UNAVAILABLE/);});});

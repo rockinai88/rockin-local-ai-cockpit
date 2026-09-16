@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 export const HealthSnapshotSchema = z.object({ status: z.enum(["online","degraded"]), ollama: z.enum(["online","offline"]), version: z.string().min(1).max(32) }).strict();
 export const ModelSummarySchema = z.object({ name: z.string().min(1).max(200), size: z.number().int().nonnegative(), parameterSize: z.string().max(40).optional(), quantization: z.string().max(40).optional() }).strict();
 export const HardwareSnapshotSchema = z.object({ cpu: z.string().max(200), ramUsed: z.number().nonnegative(), ramTotal: z.number().positive(), gpu: z.string().max(200).nullable(), vramUsed: z.number().nonnegative().nullable(), vramTotal: z.number().positive().nullable() }).strict();
