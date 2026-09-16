@@ -4,6 +4,10 @@
 
 ![RockIn Local AI Cockpit social preview](assets/brand/social-preview.png)
 
+## Demo
+
+![RockIn Local AI Cockpit demo](assets/demo/cockpit.png)
+
 [![CI](https://github.com/rockinai88/rockin-local-ai-cockpit/actions/workflows/ci.yml/badge.svg)](https://github.com/rockinai88/rockin-local-ai-cockpit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-no%20cloud-67e8f9.svg)](SECURITY.md)
@@ -23,7 +27,8 @@ npm ci
 npm run dev:web
 ```
 
-Open `http://127.0.0.1:5173`. Demo Mode works without Ollama. For live local chat, start Ollama, run `npm run dev:server` in another terminal, then switch to Live Ollama.
+Open `http://127.0.0.1:5173`. Demo Mode works without Ollama. For live local chat, start Ollama, run
+pm run dev:server` in another terminal, then switch to Live Ollama.
 
 ## Highlights
 

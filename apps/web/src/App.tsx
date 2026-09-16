@@ -78,7 +78,7 @@ export default function App() {
             : "OLLAMA OFFLINE"}
         </b>
         <span>v{data.health.version}</span>
-        <span className="privacy">NO CLOUD Â/ NO TELEMETRY</span>
+        <span className="privacy">NO CLOUD / NO TELEMETRY</span>
       </section>
       <div className="grid">
         <section className="panel graph">
@@ -158,7 +158,7 @@ export default function App() {
             <div className="model" key={m.name}>
               <b>{m.name}</b>
               <span>
-                {m.parameterSize ?? "LOCAL"} Â/ {m.quantization ?? "MODEL"}
+                {m.parameterSize ?? "LOCAL"} / {m.quantization ?? "MODEL"}
               </span>
             </div>
           ))}
