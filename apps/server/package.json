@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx src/server.ts",
-    "start": "tsx src/server.ts"
+    "dev": "tsx src/start.ts",
+    "start": "tsx src/start.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.0",

@@ -66,8 +66,3 @@ export async function buildServer(
   });
   return { app, cfg };
 }
-if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, "/")}`) {
-  const { app, cfg } = await buildServer();
-  await app.listen({ host: cfg.host, port: cfg.port });
-  console.log(`RockIn Local AI Cockpit API http://${cfg.host}:${cfg.port}`);
-}
