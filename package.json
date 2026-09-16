@@ -1,9 +1,9 @@
 {
   "name": "rockin-local-ai-cockpit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "engines": {
-    "node": ">=22"
+    "node": "\u003e=22"
   },
   "workspaces": [
     "apps/*",
@@ -21,7 +21,7 @@
     "format:check": "prettier --check .",
     "clean-room": "node scripts/clean-room-scan.mjs",
     "license:audit": "node scripts/license-audit.mjs",
-    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run e2e && npm audit --audit-level=high && npm run license:audit && npm run clean-room"
+    "verify": "npm run format:check \u0026\u0026 npm run lint \u0026\u0026 npm run typecheck \u0026\u0026 npm test \u0026\u0026 npm run build \u0026\u0026 npm run e2e \u0026\u0026 npm audit --audit-level=high \u0026\u0026 npm run license:audit \u0026\u0026 npm run clean-room"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

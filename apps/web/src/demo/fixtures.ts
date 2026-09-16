@@ -2,7 +2,7 @@ export const demoData = {
   health: {
     status: "online" as const,
     ollama: "online" as const,
-    version: "0.1.0",
+    version: "0.1.1",
   },
   models: [
     {
