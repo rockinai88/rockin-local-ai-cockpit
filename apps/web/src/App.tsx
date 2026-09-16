@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { api } from "./api.ts";
+import { api, chatErrorMessage } from "./api.ts";
 import { demoData } from "./demo/fixtures.ts";
 const GraphPanel = lazy(() =>
   import("./features/graph/GraphPanel.tsx").then((m) => ({
@@ -45,8 +45,8 @@ export default function App() {
         const r: any = await api.chat(model, message.trim());
         setReply(r.message);
       }
-    } catch {
-      setReply("Ollama is unavailable. Start Ollama or switch to Demo Mode.");
+    } catch (error) {
+      setReply(chatErrorMessage(error));
     } finally {
       setBusy(false);
     }

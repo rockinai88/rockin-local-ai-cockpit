@@ -50,7 +50,10 @@ export const ChatRequestSchema = z
   })
   .strict();
 export const ChatResponseSchema = z
-  .object({ message: z.string().max(50000), model: z.string().min(1).max(200) })
+  .object({
+    message: z.string().min(1).max(50000),
+    model: z.string().min(1).max(200),
+  })
   .strict();
 export type HealthSnapshot = z.infer<typeof HealthSnapshotSchema>;
 export type ModelSummary = z.infer<typeof ModelSummarySchema>;

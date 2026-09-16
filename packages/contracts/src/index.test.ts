@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ChatRequestSchema,
+  ChatResponseSchema,
   HardwareSnapshotSchema,
   HealthSnapshotSchema,
   ModelSummarySchema,
@@ -12,7 +13,7 @@ describe("public API contracts", () => {
       HealthSnapshotSchema.parse({
         status: "online",
         ollama: "offline",
-        version: "0.1.1",
+        version: "0.1.2",
       }).status,
     ).toBe("online");
   });
@@ -33,5 +34,9 @@ describe("public API contracts", () => {
   it("rejects oversized chat messages", () =>
     expect(() =>
       ChatRequestSchema.parse({ model: "qwen", message: "x".repeat(20001) }),
+    ).toThrow());
+  it("rejects empty chat responses", () =>
+    expect(() =>
+      ChatResponseSchema.parse({ model: "qwen", message: "" }),
     ).toThrow());
 });
