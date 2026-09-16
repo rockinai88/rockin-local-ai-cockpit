@@ -1,5 +1,62 @@
-import { ChatResponseSchema, ModelSummarySchema, type ChatRequest, type ChatResponse, type ModelSummary } from "../../../../packages/contracts/src/index.ts";
-export class OllamaClient { constructor(private readonly baseUrl="http://127.0.0.1:11434"){const u=new URL(baseUrl); if(u.protocol!=="http:"||!["127.0.0.1","localhost","[::1]"].includes(u.hostname)) throw new Error("Ollama endpoint must be local HTTP");}
- private async request(path:string,init?:RequestInit){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);try{const r=await fetch(this.baseUrl+path,{...init,signal:controller.signal});if(!r.ok)throw new Error(`OLLAMA_HTTP_${r.status}`);return r;}catch(e){if(e instanceof Error&&e.message.startsWith("OLLAMA_HTTP_"))throw e;throw new Error("OLLAMA_UNAVAILABLE");}finally{clearTimeout(timer)}}
- async listModels():Promise<ModelSummary[]>{const r=await this.request("/api/tags");const body=await r.json() as {models?:unknown[]};return (body.models??[]).slice(0,128).map((m:any)=>ModelSummarySchema.parse({name:m.name,size:m.size??0,parameterSize:m.details?.parameter_size,quantization:m.details?.quantization_level}));}
- async chat(input:ChatRequest):Promise<ChatResponse>{const r=await this.request("/api/chat",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:input.model,messages:[{role:"user",content:input.message}],stream:false})});const b=await r.json() as any;return ChatResponseSchema.parse({model:b.model??input.model,message:b.message?.content??""});}}
+import {
+  ChatResponseSchema,
+  ModelSummarySchema,
+  type ChatRequest,
+  type ChatResponse,
+  type ModelSummary,
+} from "../../../../packages/contracts/src/index.ts";
+export class OllamaClient {
+  constructor(private readonly baseUrl = "http://127.0.0.1:11434") {
+    const u = new URL(baseUrl);
+    if (
+      u.protocol !== "http:" ||
+      !["127.0.0.1", "localhost", "[::1]"].includes(u.hostname)
+    )
+      throw new Error("Ollama endpoint must be local HTTP");
+  }
+  private async request(path: string, init?: RequestInit) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    try {
+      const r = await fetch(this.baseUrl + path, {
+        ...init,
+        signal: controller.signal,
+      });
+      if (!r.ok) throw new Error(`OLLAMA_HTTP_${r.status}`);
+      return r;
+    } catch (e) {
+      if (e instanceof Error && e.message.startsWith("OLLAMA_HTTP_")) throw e;
+      throw new Error("OLLAMA_UNAVAILABLE", { cause: e });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  async listModels(): Promise<ModelSummary[]> {
+    const r = await this.request("/api/tags");
+    const body = (await r.json()) as { models?: unknown[] };
+    return (body.models ?? []).slice(0, 128).map((m: any) =>
+      ModelSummarySchema.parse({
+        name: m.name,
+        size: m.size ?? 0,
+        parameterSize: m.details?.parameter_size,
+        quantization: m.details?.quantization_level,
+      }),
+    );
+  }
+  async chat(input: ChatRequest): Promise<ChatResponse> {
+    const r = await this.request("/api/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        model: input.model,
+        messages: [{ role: "user", content: input.message }],
+        stream: false,
+      }),
+    });
+    const b = (await r.json()) as any;
+    return ChatResponseSchema.parse({
+      model: b.model ?? input.model,
+      message: b.message?.content ?? "",
+    });
+  }
+}

@@ -1,2 +1,24 @@
-import si from "systeminformation"; import type { HardwareSnapshot } from "../../../../packages/contracts/src/index.ts";
-let cached:{at:number;value:HardwareSnapshot}|undefined; export async function readHardware():Promise<HardwareSnapshot>{if(cached&&Date.now()-cached.at<2000)return cached.value;const [cpu,mem,gfx]=await Promise.all([si.cpu(),si.mem(),si.graphics()]);const g=gfx.controllers.find(x=>/nvidia/i.test(x.vendor??""))??gfx.controllers[0];const value={cpu:`${cpu.manufacturer} ${cpu.brand}`.trim().slice(0,200),ramUsed:mem.active,ramTotal:mem.total,gpu:g?.model?.slice(0,200)??null,vramUsed:null,vramTotal:g?.vram?g.vram*1024*1024:null};cached={at:Date.now(),value};return value;}
+import si from "systeminformation";
+import type { HardwareSnapshot } from "../../../../packages/contracts/src/index.ts";
+let cached: { at: number; value: HardwareSnapshot } | undefined;
+export async function readHardware(): Promise<HardwareSnapshot> {
+  if (cached && Date.now() - cached.at < 2000) return cached.value;
+  const [cpu, mem, gfx] = await Promise.all([
+    si.cpu(),
+    si.mem(),
+    si.graphics(),
+  ]);
+  const g =
+    gfx.controllers.find((x) => /nvidia/i.test(x.vendor ?? "")) ??
+    gfx.controllers[0];
+  const value = {
+    cpu: `${cpu.manufacturer} ${cpu.brand}`.trim().slice(0, 200),
+    ramUsed: mem.active,
+    ramTotal: mem.total,
+    gpu: g?.model?.slice(0, 200) ?? null,
+    vramUsed: null,
+    vramTotal: g?.vram ? g.vram * 1024 * 1024 : null,
+  };
+  cached = { at: Date.now(), value };
+  return value;
+}

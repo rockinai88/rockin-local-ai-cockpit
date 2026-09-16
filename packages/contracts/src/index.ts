@@ -1,10 +1,60 @@
 import { z } from "zod";
-export const HealthSnapshotSchema = z.object({ status: z.enum(["online","degraded"]), ollama: z.enum(["online","offline"]), version: z.string().min(1).max(32) }).strict();
-export const ModelSummarySchema = z.object({ name: z.string().min(1).max(200), size: z.number().int().nonnegative(), parameterSize: z.string().max(40).optional(), quantization: z.string().max(40).optional() }).strict();
-export const HardwareSnapshotSchema = z.object({ cpu: z.string().max(200), ramUsed: z.number().nonnegative(), ramTotal: z.number().positive(), gpu: z.string().max(200).nullable(), vramUsed: z.number().nonnegative().nullable(), vramTotal: z.number().positive().nullable() }).strict();
-export const GraphNodeSchema = z.object({ id: z.string().min(1).max(100), kind: z.enum(["runtime","model","cpu","gpu"]), label: z.string().min(1).max(200) }).strict();
-export const GraphEdgeSchema = z.object({ source: z.string().min(1).max(100), target: z.string().min(1).max(100) }).strict();
-export const GraphSnapshotSchema = z.object({ nodes: z.array(GraphNodeSchema).max(128), edges: z.array(GraphEdgeSchema).max(256) }).strict();
-export const ChatRequestSchema = z.object({ model: z.string().min(1).max(200), message: z.string().min(1).max(20000) }).strict();
-export const ChatResponseSchema = z.object({ message: z.string().max(50000), model: z.string().min(1).max(200) }).strict();
-export type HealthSnapshot = z.infer<typeof HealthSnapshotSchema>; export type ModelSummary = z.infer<typeof ModelSummarySchema>; export type HardwareSnapshot = z.infer<typeof HardwareSnapshotSchema>; export type GraphSnapshot = z.infer<typeof GraphSnapshotSchema>; export type ChatRequest = z.infer<typeof ChatRequestSchema>; export type ChatResponse = z.infer<typeof ChatResponseSchema>;
+export const HealthSnapshotSchema = z
+  .object({
+    status: z.enum(["online", "degraded"]),
+    ollama: z.enum(["online", "offline"]),
+    version: z.string().min(1).max(32),
+  })
+  .strict();
+export const ModelSummarySchema = z
+  .object({
+    name: z.string().min(1).max(200),
+    size: z.number().int().nonnegative(),
+    parameterSize: z.string().max(40).optional(),
+    quantization: z.string().max(40).optional(),
+  })
+  .strict();
+export const HardwareSnapshotSchema = z
+  .object({
+    cpu: z.string().max(200),
+    ramUsed: z.number().nonnegative(),
+    ramTotal: z.number().positive(),
+    gpu: z.string().max(200).nullable(),
+    vramUsed: z.number().nonnegative().nullable(),
+    vramTotal: z.number().positive().nullable(),
+  })
+  .strict();
+export const GraphNodeSchema = z
+  .object({
+    id: z.string().min(1).max(100),
+    kind: z.enum(["runtime", "model", "cpu", "gpu"]),
+    label: z.string().min(1).max(200),
+  })
+  .strict();
+export const GraphEdgeSchema = z
+  .object({
+    source: z.string().min(1).max(100),
+    target: z.string().min(1).max(100),
+  })
+  .strict();
+export const GraphSnapshotSchema = z
+  .object({
+    nodes: z.array(GraphNodeSchema).max(128),
+    edges: z.array(GraphEdgeSchema).max(256),
+  })
+  .strict();
+export const ChatRequestSchema = z
+  .object({
+    model: z.string().min(1).max(200),
+    message: z.string().min(1).max(20000),
+  })
+  .strict();
+export const ChatResponseSchema = z
+  .object({ message: z.string().max(50000), model: z.string().min(1).max(200) })
+  .strict();
+export type HealthSnapshot = z.infer<typeof HealthSnapshotSchema>;
+export type ModelSummary = z.infer<typeof ModelSummarySchema>;
+export type HardwareSnapshot = z.infer<typeof HardwareSnapshotSchema>;
+export type GraphSnapshot = z.infer<typeof GraphSnapshotSchema>;
+export type ChatRequest = z.infer<typeof ChatRequestSchema>;
+export type ChatResponse = z.infer<typeof ChatResponseSchema>;
