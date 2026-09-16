@@ -5,6 +5,7 @@ import {
 } from "../../../../packages/contracts/src/index.ts";
 
 let cached: { at: number; value: HardwareSnapshot } | undefined;
+let inFlight: Promise<HardwareSnapshot> | undefined;
 
 function nonnegative(value: unknown): number {
   const number = Number(value);
@@ -13,6 +14,15 @@ function nonnegative(value: unknown): number {
 
 export async function readHardware(): Promise<HardwareSnapshot> {
   if (cached && Date.now() - cached.at < 2000) return cached.value;
+  if (!inFlight) {
+    inFlight = collectHardware().finally(() => {
+      inFlight = undefined;
+    });
+  }
+  return inFlight;
+}
+
+async function collectHardware(): Promise<HardwareSnapshot> {
   const [cpu, mem, gfx] = await Promise.all([
     si.cpu(),
     si.mem(),
