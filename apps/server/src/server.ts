@@ -73,7 +73,7 @@ export async function buildServer(
     return {
       status: state === "online" ? "online" : "degraded",
       ollama: state,
-      version: "0.1.1",
+      version: "0.1.2",
     };
   });
 
@@ -112,7 +112,10 @@ export async function buildServer(
     }
     try {
       return await ollama.chat(parsed.data);
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.message === "OLLAMA_EMPTY_RESPONSE") {
+        return reply.code(502).send({ code: "MODEL_EMPTY_RESPONSE" });
+      }
       return reply.code(503).send({ code: "OLLAMA_UNAVAILABLE" });
     }
   });
