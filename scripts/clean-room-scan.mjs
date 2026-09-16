@@ -18,7 +18,8 @@ const forbidden = [
 ];
 const hits = [];
 for (const f of files) {
-  if (f.startsWith("docs/superpowers/")) continue;
+  if (f.startsWith("docs/superpowers/") || f === "scripts/clean-room-scan.mjs")
+    continue;
   const p = path.join(root, f);
   if (!fs.existsSync(p) || fs.statSync(p).size > 2_000_000) continue;
   let t;
