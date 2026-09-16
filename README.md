@@ -27,8 +27,7 @@ npm ci
 npm run dev:web
 ```
 
-Open `http://127.0.0.1:5173`. Demo Mode works without Ollama. For live local chat, start Ollama, run
-pm run dev:server` in another terminal, then switch to Live Ollama.
+Open `http://127.0.0.1:5173`. Demo Mode works without Ollama. For live local chat, start Ollama, run `npm run dev:server` in another terminal, then switch to Live Ollama.
 
 ## Highlights
 
