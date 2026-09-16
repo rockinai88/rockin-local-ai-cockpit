@@ -1,0 +1,18 @@
+const API = "http://127.0.0.1:43123/api/v1";
+async function json(path: string, init?: RequestInit) {
+  const r = await fetch(API + path, init);
+  if (!r.ok) throw new Error(`API_${r.status}`);
+  return r.json();
+}
+export const api = {
+  health: () => json("/health"),
+  models: () => json("/models"),
+  system: () => json("/system"),
+  graph: () => json("/graph"),
+  chat: (model: string, message: string) =>
+    json("/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ model, message }),
+    }),
+};

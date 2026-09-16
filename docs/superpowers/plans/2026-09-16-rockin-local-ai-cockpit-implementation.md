@@ -11,6 +11,7 @@
 **Spec:** `docs/superpowers/specs/2026-09-16-rockin-local-ai-cockpit-design.md`
 
 ## Global Constraints
+
 - New clean-room project only; no private RockIn source, secrets, paths, databases, or logs.
 - Core operation requires no cloud account, API key, or telemetry.
 - Server binds to `127.0.0.1` by default and rejects unsafe non-loopback binds.
@@ -21,6 +22,7 @@
 - Public release is blocked until full tests, security audit, license audit, secret scan, clean-room scan, and production build pass.
 
 ---
+
 ### Task 1: Workspace foundation and contracts
 
 **Files:** Create `package.json`, `tsconfig.base.json`, `eslint.config.js`, `.prettierrc.json`, `.gitignore`, `packages/contracts/package.json`, `packages/contracts/src/index.ts`, `packages/contracts/src/index.test.ts`.
@@ -44,6 +46,7 @@
 - [ ] **Step 3: Implement Fastify server** with body limit, loopback bind validation, strict CORS/origin handling, security headers, structured local error codes, and no request logging of prompt bodies.
 - [ ] **Step 4: Run tests and a real loopback smoke** using an ephemeral port.
 - [ ] **Step 5: Commit** `feat(server): add loopback-only secure API foundation`.
+
 ### Task 3: Ollama discovery, models, and chat adapter
 
 **Files:** Create `apps/server/src/ollama/client.ts`, `apps/server/src/routes/models.ts`, `apps/server/src/routes/chat.ts`, `apps/server/test/ollama.test.ts`, `apps/server/test/chat.test.ts`.
@@ -67,6 +70,7 @@
 - [ ] **Step 3: Implement `systeminformation` adapter** with a 2-second cache and a pure graph builder that emits only models, runtime, hardware, and capability nodes.
 - [ ] **Step 4: Run tests and measure endpoint latency over 20 requests; cached requests must avoid repeated full hardware scans.**
 - [ ] **Step 5: Commit** `feat(server): add hardware and topology snapshots`.
+
 ### Task 5: Web shell, dashboard, and deterministic demo mode
 
 **Files:** Create `apps/web/package.json`, `apps/web/index.html`, `apps/web/src/main.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `apps/web/src/api/client.ts`, `apps/web/src/demo/fixtures.ts`, component tests.
@@ -102,6 +106,7 @@
 - [ ] **Step 3: Implement Three.js renderer** with capped pixel ratio, deterministic layout seed, node focus, zoom-to-fit, cleanup, and SVG fallback.
 - [ ] **Step 4: Run tests plus browser smoke with WebGL and forced fallback.**
 - [ ] **Step 5: Commit** `feat(web): add accessible 3d topology view`.
+
 ### Task 8: End-to-end verification and production scripts
 
 **Files:** Create `playwright.config.ts`, `tests/e2e/demo.spec.ts`, `tests/e2e/offline.spec.ts`, `scripts/verify.mjs`, `scripts/clean-room-scan.mjs`.

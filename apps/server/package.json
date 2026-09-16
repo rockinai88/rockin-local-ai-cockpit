@@ -1,0 +1,16 @@
+{
+  "name": "@rockin/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/start.ts",
+    "start": "tsx src/start.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.0",
+    "fastify": "^5.0.0",
+    "systeminformation": "^5.0.0",
+    "@rockin/contracts": "*"
+  }
+}

@@ -1,0 +1,21 @@
+import type {
+  GraphSnapshot,
+  HardwareSnapshot,
+  ModelSummary,
+} from "../../../../packages/contracts/src/index.ts";
+export function buildGraph(
+  models: ModelSummary[],
+  hw: HardwareSnapshot,
+): GraphSnapshot {
+  const nodes: GraphSnapshot["nodes"] = [
+    { id: "runtime:ollama", kind: "runtime", label: "Ollama" },
+    { id: "hardware:cpu", kind: "cpu", label: hw.cpu },
+  ];
+  if (hw.gpu) nodes.push({ id: "hardware:gpu", kind: "gpu", label: hw.gpu });
+  for (const m of models.slice(0, 124))
+    nodes.push({ id: `model:${m.name}`, kind: "model", label: m.name });
+  const edges = nodes
+    .filter((n) => n.kind === "model")
+    .map((n) => ({ source: "runtime:ollama", target: n.id }));
+  return { nodes, edges };
+}
