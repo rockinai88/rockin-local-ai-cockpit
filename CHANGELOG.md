@@ -4,6 +4,10 @@ All notable changes follow Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed
+
+- Share in-flight hardware sampling across concurrent requests while preserving the two-second cache and allowing retries after collection failures.
+
 ## [0.1.2] - 2026-09-16
 
 ### Fixed
