@@ -73,7 +73,7 @@ export async function buildServer(
     return {
       status: state === "online" ? "online" : "degraded",
       ollama: state,
-      version: "0.1.2",
+      version: "0.1.3",
     };
   });
 
