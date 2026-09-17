@@ -13,7 +13,7 @@ describe("public API contracts", () => {
       HealthSnapshotSchema.parse({
         status: "online",
         ollama: "offline",
-        version: "0.1.2",
+        version: "0.1.3",
       }).status,
     ).toBe("online");
   });
