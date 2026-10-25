@@ -64,7 +64,9 @@ describe("concurrent hardware sampling (synthetic fixtures)", () => {
 
   it("shares a failed sample and allows a later retry", async () => {
     const source = collectors();
-    const failure = new Error("fixture graphics unavailable");
+    const failure = new Error("Hardware telemetry unavailable");
+    source.cpu.mockRejectedValueOnce(failure);
+    source.mem.mockRejectedValueOnce(failure);
     source.graphics.mockRejectedValueOnce(failure);
     const readHardware = await loadReader(source);
     const results = await Promise.allSettled([readHardware(), readHardware()]);

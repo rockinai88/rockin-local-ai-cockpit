@@ -108,7 +108,9 @@ export default function App() {
           <div className="metric">
             <small>MEMORY</small>
             <b>
-              {gb(data.hardware.ramUsed)} / {gb(data.hardware.ramTotal)}
+              {data.hardware.ramTotal > 0
+                ? `${gb(data.hardware.ramUsed)} / ${gb(data.hardware.ramTotal)}`
+                : "Unknown"}
             </b>
           </div>
           <div className="metric">
