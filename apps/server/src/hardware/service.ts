@@ -23,19 +23,21 @@ export async function readHardware(): Promise<HardwareSnapshot> {
 }
 
 async function collectHardware(): Promise<HardwareSnapshot> {
-  const [cpu, mem, gfx] = await Promise.all([
-    si.cpu(),
-    si.mem(),
-    si.graphics(),
-  ]);
+  const samples = await Promise.allSettled([si.cpu(), si.mem(), si.graphics()]);
+  if (samples.every((sample) => sample.status === "rejected")) {
+    throw new Error("Hardware telemetry unavailable");
+  }
+  const cpu = samples[0].status === "fulfilled" ? samples[0].value : undefined;
+  const mem = samples[1].status === "fulfilled" ? samples[1].value : undefined;
+  const gfx = samples[2].status === "fulfilled" ? samples[2].value : undefined;
+  const controllers = gfx?.controllers ?? [];
   const g =
-    gfx.controllers.find((x) => /nvidia/i.test(x.vendor ?? "")) ??
-    gfx.controllers[0];
-  const ramTotal = nonnegative(mem.total);
+    controllers.find((x) => /nvidia/i.test(x.vendor ?? "")) ?? controllers[0];
+  const ramTotal = nonnegative(mem?.total);
   const ramUsed =
-    ramTotal === 0 ? 0 : Math.min(nonnegative(mem.active), ramTotal);
+    ramTotal === 0 ? 0 : Math.min(nonnegative(mem?.active), ramTotal);
   const cpuLabel =
-    `${cpu.manufacturer ?? ""} ${cpu.brand ?? ""}`.trim() || "Unknown CPU";
+    `${cpu?.manufacturer ?? ""} ${cpu?.brand ?? ""}`.trim() || "Unknown CPU";
   const gpuLabel = g?.model?.trim() || null;
   const vramMb = Number(g?.vram);
   const value = HardwareSnapshotSchema.parse({

@@ -42,11 +42,16 @@ export function GraphPanel({ graph }: { graph: GraphSnapshot }) {
       camera.updateProjectionMatrix();
       if (!reduce) group.rotation.y += 0.003;
       renderer.render(scene, camera);
-      raf = requestAnimationFrame(draw);
+      if (!reduce) raf = requestAnimationFrame(draw);
     };
     draw();
+    const resize = () => {
+      if (reduce) draw();
+    };
+    window.addEventListener("resize", resize);
     return () => {
-      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      if (raf) cancelAnimationFrame(raf);
       renderer.dispose();
       group.traverse((o) => {
         if (o instanceof THREE.Mesh) {
