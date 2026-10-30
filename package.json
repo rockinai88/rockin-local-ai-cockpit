@@ -46,9 +46,9 @@
   "dependencies": {
     "@fastify/cors": "^11.3.0",
     "fastify": "^5.12.5",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "systeminformation": "^5.33.10",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "systeminformation": "^5.33.16",
     "three": "^0.186.1"
   },
   "type": "module"
