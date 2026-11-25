@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.4.1",
-    "fastify": "^5.12.5",
+    "fastify": "^5.12.8",
     "systeminformation": "^5.33.19",
     "@rockin/contracts": "*"
   }
